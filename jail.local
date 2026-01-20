@@ -4,6 +4,7 @@ findtime = 10m
 maxretry = 5
 banaction = ufw
 
+# ===== SSH =====
 [sshd]
 enabled = true
 port = ssh
@@ -12,6 +13,9 @@ logpath = /var/log/auth.log
 maxretry = 3
 bantime = 24h
 
+# ===== NGINX =====
+
+# Failed HTTP basic auth
 [nginx-http-auth]
 enabled = true
 port = http,https
@@ -19,6 +23,7 @@ filter = nginx-http-auth
 logpath = /var/log/nginx/error.log
 maxretry = 5
 
+# Rate limit violations (requires limit_req in nginx)
 [nginx-limit-req]
 enabled = true
 port = http,https
@@ -28,9 +33,49 @@ maxretry = 10
 findtime = 1m
 bantime = 1h
 
+# Bot scanners looking for vulnerabilities
 [nginx-botsearch]
 enabled = true
 port = http,https
 filter = nginx-botsearch
 logpath = /var/log/nginx/access.log
 maxretry = 2
+
+# Bad bots by user-agent
+[nginx-badbots]
+enabled = true
+port = http,https
+filter = nginx-badbots
+logpath = /var/log/nginx/access.log
+maxretry = 1
+bantime = 24h
+
+# 400 Bad Request errors
+[nginx-bad-request]
+enabled = true
+port = http,https
+filter = nginx-bad-request
+logpath = /var/log/nginx/access.log
+maxretry = 5
+findtime = 5m
+bantime = 1h
+
+# 403 Forbidden errors (repeated access attempts)
+[nginx-forbidden]
+enabled = true
+port = http,https
+filter = nginx-forbidden
+logpath = /var/log/nginx/access.log
+maxretry = 5
+findtime = 5m
+bantime = 1h
+
+# 404 scanners (looking for vulnerabilities)
+[nginx-404]
+enabled = true
+port = http,https
+filter = nginx-404
+logpath = /var/log/nginx/access.log
+maxretry = 10
+findtime = 1m
+bantime = 30m

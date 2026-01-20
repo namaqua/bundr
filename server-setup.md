@@ -15,12 +15,25 @@
 - **Config:** /etc/nginx/
 - **Web Root:** /var/www/html
 - **Service:** `systemctl status nginx`
+- **Rate Limiting:** Enabled (10 req/s, burst 20)
+- **Security:** Blocks .php, .env, .git, .sql, etc.
 
 ### Fail2Ban (v1.0.2)
 - **Installed:** 2026-01-20
 - **Config:** /etc/fail2ban/jail.local
 - **Service:** `systemctl status fail2ban`
-- **Active Jails:** sshd, nginx-http-auth, nginx-limit-req, nginx-botsearch
+- **Active Jails:** 8 jails
+
+| Jail | Protection |
+|------|------------|
+| sshd | Failed SSH logins (24h ban) |
+| nginx-http-auth | Failed HTTP auth |
+| nginx-limit-req | Rate limit violations |
+| nginx-botsearch | Vulnerability scanners |
+| nginx-badbots | Known bad user-agents (24h ban) |
+| nginx-bad-request | 400 errors |
+| nginx-forbidden | 403 errors |
+| nginx-404 | 404 scanners |
 
 **Commands:**
 ```bash
