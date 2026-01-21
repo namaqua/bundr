@@ -95,6 +95,56 @@ ufw allow <port>      # Allow a port
 ufw deny <port>       # Deny a port
 ```
 
+### Docker & Docker Compose
+- **Installed:** 2026-01-21
+- **Service:** `systemctl status docker`
+
+**Commands:**
+```bash
+docker ps                      # List running containers
+docker compose ps              # List containers in current directory
+docker compose logs -f         # Follow logs
+```
+
+### Nextcloud (collabcloud.bollman-roets.de)
+- **Installed:** 2026-01-21
+- **Location:** /opt/nextcloud/
+- **URL:** https://collabcloud.bollman-roets.de
+- **SSL:** Let's Encrypt (auto-renews)
+
+**Components:**
+| Container | Image | Purpose |
+|-----------|-------|---------|
+| nextcloud-app | nextcloud:29-apache | Main application |
+| nextcloud-db | mariadb:10.11 | Database |
+| nextcloud-redis | redis:7-alpine | Caching |
+
+**Commands:**
+```bash
+cd /opt/nextcloud
+docker compose ps              # Check status
+docker compose logs -f app     # Follow Nextcloud logs
+docker compose restart         # Restart all containers
+./update.sh                    # Update Nextcloud
+
+# Nextcloud CLI (occ)
+docker exec -u www-data nextcloud-app php occ status
+docker exec -u www-data nextcloud-app php occ app:list
+docker exec -u www-data nextcloud-app php occ maintenance:mode --on
+docker exec -u www-data nextcloud-app php occ maintenance:mode --off
+```
+
+**Installed Apps:**
+- Calendar (CalDAV)
+- Contacts (CardDAV)
+- Talk (Chat/Video)
+- Deck (Kanban)
+- Tasks
+
+**CalDAV/CardDAV URLs:**
+- CalDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/calendars/<username>/`
+- CardDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/addressbooks/users/<username>/`
+
 ## System Updates
 
 ```bash

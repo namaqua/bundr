@@ -1,0 +1,79 @@
+# Nextcloud Docker Compose Configuration
+# Deploy to: /opt/nextcloud/docker-compose.yml
+#
+# Usage:
+#   cd /opt/nextcloud
+#   docker compose up -d
+#
+# Logs:
+#   docker compose logs -f app
+
+services:
+  db:
+    image: mariadb:10.11
+    container_name: nextcloud-db
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    networks:
+      - nextcloud
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+    volumes:
+      - ./redis:/data
+    networks:
+      - nextcloud
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  app:
+    image: nextcloud:29-apache
+    container_name: nextcloud-app
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./data:/var/www/html
+      - ./config:/var/www/html/config
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - REDIS_HOST=redis
+      - NEXTCLOUD_ADMIN_USER=${ADMIN_USER}
+      - NEXTCLOUD_ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - NEXTCLOUD_TRUSTED_DOMAINS=collabcloud.bollman-roets.de
+      - OVERWRITEPROTOCOL=https
+      - OVERWRITEHOST=collabcloud.bollman-roets.de
+      - PHP_MEMORY_LIMIT=512M
+      - PHP_UPLOAD_LIMIT=10G
+    networks:
+      - nextcloud
+
+networks:
+  nextcloud:
+    driver: bridge
