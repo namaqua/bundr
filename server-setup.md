@@ -126,6 +126,7 @@ docker compose logs -f         # Follow logs
 | nextcloud-app | nextcloud:29-apache | Main application |
 | nextcloud-db | mariadb:10.11 | Database |
 | nextcloud-redis | redis:7-alpine | Caching |
+| nextcloud-whiteboard | ghcr.io/nextcloud-releases/whiteboard:stable | Real-time whiteboard collaboration |
 
 **Commands:**
 ```bash
@@ -148,6 +149,7 @@ docker exec -u www-data nextcloud-app php occ maintenance:mode --off
 - Talk (Chat/Video)
 - Deck (Kanban)
 - Tasks
+- Whiteboard (Excalidraw-based, real-time collaboration)
 - OpenID Connect Provider (OIDC) - identity provider for Taiga SSO
 
 **CalDAV/CardDAV URLs:**
@@ -156,6 +158,11 @@ docker exec -u www-data nextcloud-app php occ maintenance:mode --off
 
 **OIDC Clients:**
 - Taiga (projects.bollman-roets.de)
+
+**Whiteboard:**
+- Backend URL: `https://collabcloud.bollman-roets.de/whiteboard`
+- Create whiteboards via the "+" menu in Nextcloud Files
+- Supports real-time collaboration with multiple users
 
 ### Taiga (projects.bollman-roets.de)
 - **Installed:** 2026-01-21
