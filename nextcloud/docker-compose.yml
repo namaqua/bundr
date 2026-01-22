@@ -84,7 +84,7 @@ services:
 
   # Whiteboard server for real-time collaboration (Excalidraw-based)
   whiteboard:
-    image: ghcr.io/nextcloud-releases/whiteboard:v1
+    image: ghcr.io/nextcloud-releases/whiteboard:stable
     container_name: nextcloud-whiteboard
     restart: unless-stopped
     ports:
