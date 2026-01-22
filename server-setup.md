@@ -8,6 +8,11 @@
 - **RAM:** 16GB
 - **Storage:** 464GB
 
+**Server Users also for collablcoud**
+colin │ AggG3MlfR1qk9FiR8ZnMhw== 
+
+robin │ 2nPNPRc3Yvw2k0u7L4s67g== 
+
 ## Installed Software
 
 ### NGINX (v1.24.0)
@@ -22,7 +27,7 @@
 - **Installed:** 2026-01-20
 - **Config:** /etc/fail2ban/jail.local
 - **Service:** `systemctl status fail2ban`
-- **Active Jails:** 8 jails
+- **Active Jails:** 9 jails
 
 | Jail | Protection |
 |------|------------|
@@ -34,6 +39,7 @@
 | nginx-bad-request | 400 errors |
 | nginx-forbidden | 403 errors |
 | nginx-404 | 404 scanners |
+| nextcloud | Failed Nextcloud logins |
 
 **Commands:**
 ```bash
@@ -75,6 +81,8 @@ certbot renew                   # Force renewal
 /var/docs                  - Documentation (NOT deployed)
 /etc/nginx/sites-available - NGINX site configurations
 /etc/nginx/sites-enabled   - Active sites (symlinks)
+/opt/nextcloud             - Nextcloud installation
+/opt/taiga                 - Taiga installation
 ```
 
 ## Access
@@ -140,10 +148,74 @@ docker exec -u www-data nextcloud-app php occ maintenance:mode --off
 - Talk (Chat/Video)
 - Deck (Kanban)
 - Tasks
+- OpenID Connect Provider (OIDC) - identity provider for Taiga SSO
 
 **CalDAV/CardDAV URLs:**
 - CalDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/calendars/<username>/`
 - CardDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/addressbooks/users/<username>/`
+
+**OIDC Clients:**
+- Taiga (projects.bollman-roets.de)
+
+### Taiga (projects.bollman-roets.de)
+- **Installed:** 2026-01-21
+- **Location:** /opt/taiga/
+- **URL:** https://projects.bollman-roets.de
+- **SSL:** Let's Encrypt (auto-renews)
+- **Cert Expires:** 2026-04-21
+- **SSO:** Enabled via Nextcloud OpenID Connect
+
+**Source:** Custom images based on [kaleidos-ventures/taiga](https://github.com/kaleidos-ventures/taiga) (official) + OpenID plugin
+
+**Components:**
+| Container | Image | Purpose |
+|-----------|-------|---------|
+| taiga-back | taiga-back-openid:local | Backend API + OpenID (custom) |
+| taiga-front | taiga-front-openid:local | Frontend + OpenID (custom) |
+| taiga-async | taiga-back-openid:local | Async workers (custom) |
+| taiga-events | taigaio/taiga-events | WebSocket events |
+| taiga-db | postgres:12.3 | PostgreSQL database |
+| taiga-gateway | nginx:1.19-alpine | Internal routing |
+| taiga-protected | taigaio/taiga-protected | Attachment serving |
+| taiga-async-rabbitmq | rabbitmq:3.8 | Async message queue |
+| taiga-events-rabbitmq | rabbitmq:3.8 | Events message queue |
+
+**Commands:**
+```bash
+cd /opt/taiga
+docker compose ps              # Check status
+docker compose logs -f         # Follow all logs
+docker compose logs -f taiga-back  # Follow backend logs
+docker compose restart         # Restart all containers
+```
+
+**Rebuild Custom Images (to update base images):**
+```bash
+cd /opt/taiga/custom-images/taiga-back-openid
+docker build -t taiga-back-openid:local .
+
+cd /opt/taiga/custom-images/taiga-front-openid
+docker build -t taiga-front-openid:local .
+
+cd /opt/taiga
+docker compose up -d
+```
+
+**Features:**
+- Kanban boards
+- Scrum with sprint planning
+- Backlog management
+- Burndown/burnup charts
+- Epics and user stories
+- Issue tracking
+- Wiki documentation
+- SSO via CollabCloud (Nextcloud)
+
+**First Login:**
+1. Go to https://projects.bollman-roets.de
+2. Click "LOGIN WITH COLLABCLOUD"
+3. Authenticate with Nextcloud credentials
+4. First user to login becomes admin
 
 ## System Updates
 
