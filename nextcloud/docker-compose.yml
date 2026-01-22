@@ -7,6 +7,14 @@
 #
 # Logs:
 #   docker compose logs -f app
+#
+# Whiteboard Setup (after first deployment):
+#   1. Install the Whiteboard app from Nextcloud App Store or run:
+#      docker exec -u www-data nextcloud-app php occ app:install whiteboard
+#   2. Configure the whiteboard server URL:
+#      docker exec -u www-data nextcloud-app php occ config:app:set whiteboard collabBackendUrl --value="https://collabcloud.bollman-roets.de/whiteboard"
+#   3. Set the JWT secret (must match WHITEBOARD_SECRET in .env):
+#      docker exec -u www-data nextcloud-app php occ config:app:set whiteboard jwt_secret_key --value="<your-secret>"
 
 services:
   db:
@@ -71,6 +79,19 @@ services:
       - OVERWRITEHOST=collabcloud.bollman-roets.de
       - PHP_MEMORY_LIMIT=512M
       - PHP_UPLOAD_LIMIT=10G
+    networks:
+      - nextcloud
+
+  # Whiteboard server for real-time collaboration (Excalidraw-based)
+  whiteboard:
+    image: ghcr.io/nextcloud-releases/whiteboard:v1
+    container_name: nextcloud-whiteboard
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3002:3002"
+    environment:
+      - NEXTCLOUD_URL=https://collabcloud.bollman-roets.de
+      - JWT_SECRET_KEY=${WHITEBOARD_SECRET}
     networks:
       - nextcloud
 
