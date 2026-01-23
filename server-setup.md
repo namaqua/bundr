@@ -62,13 +62,14 @@ certbot renew                   # Force renewal
 
 ## Hosted Sites
 
-### bollman-roets.de (default)
+### bollmann-roets.de (default)
+- **Primary Domain:** bollmann-roets.de, www.bollmann-roets.de
+- **Legacy Domain:** bollman-roets.de, www.bollman-roets.de (redirects to primary)
 - **Root:** /var/www/bollman-roets.de
 - **Config:** /etc/nginx/sites-available/bollman-roets.de
-- **URL:** https://bollman-roets.de
+- **URL:** https://bollmann-roets.de
 - **SSL:** Let's Encrypt (auto-renews)
-- **Cert Expires:** 2026-04-20
-- **Cert Path:** /etc/letsencrypt/live/bollman-roets.de/
+- **Cert Path:** /etc/letsencrypt/live/bollmann-roets.de/
 - **Current Page:** Holding page ("b & r / Maßgeschneiderte Lösungen / Demnächst")
 - **Font:** Outfit (Google Fonts)
 - **Deployed:** 2026-01-20
@@ -88,7 +89,7 @@ certbot renew                   # Force renewal
 ## Access
 
 - **SSH:** `ssh root@85.215.193.34`
-- **HTTPS:** https://bollman-roets.de (HTTP auto-redirects)
+- **HTTPS:** https://bollmann-roets.de (HTTP auto-redirects)
 
 ## Firewall
 
@@ -114,10 +115,11 @@ docker compose ps              # List containers in current directory
 docker compose logs -f         # Follow logs
 ```
 
-### Nextcloud (collabcloud.bollman-roets.de)
+### Nextcloud (collabcloud.bollmann-roets.de)
 - **Installed:** 2026-01-21
 - **Location:** /opt/nextcloud/
-- **URL:** https://collabcloud.bollman-roets.de
+- **Primary URL:** https://collabcloud.bollmann-roets.de
+- **Legacy URL:** https://collabcloud.bollman-roets.de (redirects to primary)
 - **SSL:** Let's Encrypt (auto-renews)
 
 **Components:**
@@ -153,14 +155,14 @@ docker exec -u www-data nextcloud-app php occ maintenance:mode --off
 - OpenID Connect Provider (OIDC) - identity provider for Taiga SSO
 
 **CalDAV/CardDAV URLs:**
-- CalDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/calendars/<username>/`
-- CardDAV: `https://collabcloud.bollman-roets.de/remote.php/dav/addressbooks/users/<username>/`
+- CalDAV: `https://collabcloud.bollmann-roets.de/remote.php/dav/calendars/<username>/`
+- CardDAV: `https://collabcloud.bollmann-roets.de/remote.php/dav/addressbooks/users/<username>/`
 
 **OIDC Clients:**
-- Taiga (projects.bollman-roets.de)
+- Taiga (projects.bollmann-roets.de)
 
 **Whiteboard:**
-- Backend URL: `https://collabcloud.bollman-roets.de/whiteboard`
+- Backend URL: `https://collabcloud.bollmann-roets.de/whiteboard`
 - Create whiteboards via the "+" menu in Nextcloud Files
 - Supports real-time collaboration with multiple users
 
